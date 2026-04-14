@@ -1,0 +1,74 @@
+asset:
+  symbol: EURUSD
+  timeframe: H1
+  timezone: UTC
+
+phases:
+  accumulation: 0
+  manipulation: 1
+  distribution: 2
+  max_stagnation_bars: 12  # τ*
+
+detectors:
+  phase_entrapment:
+    enabled: true
+    threshold: 0.7  # δ*
+  temporal_failure:
+    enabled: true
+    lookback: 20
+    min_winrate: 0.45
+  spectral_inversion:
+    enabled: true
+    fft_window: 64
+    freq_band: [0.02, 0.25]  # cycles per bar
+  confluence_collapse:
+    enabled: true
+    phi_threshold: 0.65
+    return_lookback: 10
+  liquidity_gradient:
+    enabled: false  # Expensive, disable for now
+
+obnfe:
+  alpha_persistence: 0.92
+  prior_a: 1.0
+  prior_b: 1.0
+  cross_links:
+    - [0, 2]  # phase → spectral
+    - [1, 3]  # temporal → confluence
+  posterior_threshold: 0.65
+
+tda:
+  window: 50
+  epsilon: 0.5
+  min_persistence: 0.15
+  max_dimension: 2
+  adaptive_threshold: true
+  mad_multiplier: 1.5
+
+adelic:
+  primes: [2, 3, 5, 7, 11, 13]  # N=6
+  max_nonzero_valuations: 3   # ≤ N/2
+  coherence_check: true
+
+ensemble_weights:
+  obnfe: 0.6
+  tda: 0.4
+
+thresholds:
+  reverse: 0.65
+  exploration: 0.15  # π_explore for boundary sampling
+
+risk:
+  max_drawdown: 0.12
+  atr_period: 14
+  position_fraction: 0.01
+  max_leverage: 50
+
+feed:
+  provider: oanda  # or 'interactive_brokers', 'cryptofacilities'
+  ws_endpoint: wss://stream-fxpractice.oanda.com/v3/accounts/{account}/pricing
+  buffer_size: 1000
+
+persistence:
+  checkpoint_interval: 3600  # seconds
+  checkpoint_dir: ./data/models/

@@ -1,0 +1,23 @@
+# config/brokers/oanda.toml
+[fix_session]
+sender_comp_id = "RPD_OANDA_01"
+target_comp_id = "OANDA"
+fix_version = "FIX.4.4"
+heartbeat_interval = 30
+
+[connection]
+host = "fix.oanda.com"
+port = 443
+use_ssl = true
+
+[performance]
+recv_buffer = 1048576  # 1MB (smallest, low priority)
+send_buffer = 1048576
+
+[order_defaults]
+time_in_force = "IOC"
+
+[symbols]
+# OANDA doesn't offer copper directly
+# Used for USD hedging if needed
+XCUUSD = "XCU/USD"  # Synthetic if available
